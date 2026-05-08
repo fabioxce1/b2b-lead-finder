@@ -1,9 +1,5 @@
-import json
-import os
 from typing import Optional
 from models import Company, MatchResult
-
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "sample_companies.json")
 
 INDUSTRY_MAP = {
     "tecnologia": ["Tecnología", "Tecnología", "Tecnología"],
@@ -47,12 +43,6 @@ SIZE_MAP = {
     "large": "Grande",
     "enterprise": "Grande",
 }
-
-
-def load_companies() -> list[Company]:
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return [Company(**item) for item in data]
 
 
 def normalize_text(text: str) -> str:
@@ -130,11 +120,11 @@ def calculate_match_score(
 
 
 def search_companies(
+    companies: list[Company],
     specialization: str,
     target_audience: str,
     location: str,
 ) -> list[MatchResult]:
-    companies = load_companies()
     results = []
 
     for company in companies:

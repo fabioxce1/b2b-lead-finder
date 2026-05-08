@@ -6,7 +6,11 @@ class SearchRequest(BaseModel):
     specialization: str
     target_audience: str
     location: str
-    openai_api_key: Optional[str] = None
+    google_places_api_key: Optional[str] = None
+    serp_api_key: Optional[str] = None
+    gemini_api_key: Optional[str] = None
+    deep_analysis: bool = False
+    manual_companies: list[dict] = []
 
 
 class Company(BaseModel):
@@ -20,10 +24,21 @@ class Company(BaseModel):
     city: str
     description: str
     website: str
-    pain_points: list[str]
-    budget_range: str
-    decision_makers: list[str]
-    growth_stage: str
+    pain_points: list[str] = []
+    budget_range: str = "medio"
+    decision_makers: list[str] = []
+    growth_stage: str = "estable"
+    source: str = "sample"
+    rating: float = 0
+    website_content: str = ""
+
+
+class SpecificOpportunity(BaseModel):
+    title: str
+    description: str
+    impact: str
+    effort: str
+    urgency: str
 
 
 class MatchResult(BaseModel):
@@ -33,6 +48,8 @@ class MatchResult(BaseModel):
     opportunity_level: str
     matching_factors: list[str]
     recommendation: str
+    specific_opportunities: list[SpecificOpportunity] = []
+    ai_analysis: str = ""
 
 
 class UseCase(BaseModel):
@@ -48,3 +65,12 @@ class AnalysisResponse(BaseModel):
     results: list[MatchResult]
     summary: dict
     use_cases: list[UseCase]
+
+
+class ValidateKeyRequest(BaseModel):
+    api_key: str
+
+
+class ValidateKeyResponse(BaseModel):
+    valid: bool
+    message: str

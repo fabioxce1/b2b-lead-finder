@@ -14,3 +14,30 @@ export async function searchLeads(data) {
 
   return response.json();
 }
+
+export async function validateGoogleKey(apiKey) {
+  const response = await fetch(`${API_BASE}/api/validate/google-places`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ api_key: apiKey }),
+  });
+  return response.json();
+}
+
+export async function validateSerpAPIKey(apiKey) {
+  const response = await fetch(`${API_BASE}/api/validate/serpapi`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ api_key: apiKey }),
+  });
+  return response.json();
+}
+
+export async function validateGeminiKey(apiKey) {
+  const response = await fetch(`${API_BASE}/api/validate/gemini`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ api_key: apiKey }),
+  });
+  return response.json();
+}

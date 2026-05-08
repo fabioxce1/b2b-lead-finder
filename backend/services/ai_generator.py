@@ -1,6 +1,7 @@
+import json
 from typing import Optional
-from openai import OpenAI
-from models import MatchResult, UseCase
+import google.generativeai as genai
+from models import MatchResult, UseCase, SpecificOpportunity
 
 
 def generate_ai_analysis(
@@ -14,20 +15,26 @@ def generate_ai_analysis(
         return _fallback_analysis(specialization, results)
 
     try:
-        client = OpenAI(api_key=api_key)
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
         top_companies = results[:5]
         companies_context = []
         for r in top_companies:
+            website_info = ""
+            if r.company.website_content:
+                website_info = f"\n   Contenido web: {r.company.website_content[:1000]}..."
+
             companies_context.append(
                 f"- {r.company.name} ({r.company.industry}, {r.company.location}): "
+                f"Descripción: {r.company.description}. "
                 f"Pain points: {', '.join(r.company.pain_points)}. "
                 f"Presupuesto: {r.company.budget_range}. "
                 f"Etapa: {r.company.growth_stage}. "
-                f"Decisores: {', '.join(r.company.decision_makers)}."
+                f"Decisores: {', '.join(r.company.decision_makers)}.{website_info}"
             )
 
-        prompt = f"""Eres un experto en desarrollo de negocios B2B. Analiza la siguiente situación:
+        prompt = f"""Eres un experto en desarrollo de negocios B2B y consultoría tecnológica. Analiza la siguiente situación:
 
 ESPECIALIZACIÓN DEL PROVEEDOR: {specialization}
 PÚBLICO OBJETIVO: {target_audience}
@@ -62,15 +69,14 @@ Responde SOLO con JSON en este formato exacto:
   ]
 }}"""
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=2000,
-        )
+        response = model.generate_content(prompt)
+        content = response.text
 
-        import json
-        content = response.choices[0].message.content
+        json_start = content.find("{")
+        json_end = content.rfind("}") + 1
+        if json_start >= 0 and json_end > json_start:
+            content = content[json_start:json_end]
+
         data = json.loads(content)
 
         summary = data.get("summary", {})
@@ -92,6 +98,79 @@ Responde SOLO con JSON en este formato exacto:
 
     except Exception:
         return _fallback_analysis(specialization, results)
+
+
+async def analyze_company_opportunities(
+    company: MatchResult,
+    specialization: str,
+    api_key: str,
+) -> tuple[list[SpecificOpportunity], str]:
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-2.5-flash")
+
+        website_info = ""
+        if company.company.website_content:
+            website_info = f"""
+CONTENIDO DEL SITIO WEB DE LA EMPRESA:
+{company.company.website_content[:3000]}
+"""
+
+        prompt = f"""Eres un consultor tecnológico experto. Analiza cómo un profesional con la siguiente especialización puede ayudar a esta empresa:
+
+ESPECIALIZACIÓN DEL PROVEEDOR: {specialization}
+
+EMPRESA: {company.company.name}
+INDUSTRIA: {company.company.industry}
+UBICACIÓN: {company.company.location}
+DESCRIPCIÓN: {company.company.description}
+PAIN POINTS: {', '.join(company.company.pain_points)}
+DECISORES: {', '.join(company.company.decision_makers)}
+{website_info}
+
+Responde SOLO con JSON en este formato:
+{{
+  "opportunities": [
+    {{
+      "title": "<título corto de la oportunidad>",
+      "description": "<descripción detallada de cómo aplicar la especialización a esta empresa>",
+      "impact": "<alto|medio|bajo>",
+      "effort": "<alto|medio|bajo>",
+      "urgency": "<alta|media|baja>"
+    }}
+  ],
+  "analysis": "<análisis general de 2-3 oraciones sobre las oportunidades tecnológicas de esta empresa>"
+}}
+
+Genera entre 3 y 6 oportunidades específicas y concretas."""
+
+        response = model.generate_content(prompt)
+        content = response.text
+
+        json_start = content.find("{")
+        json_end = content.rfind("}") + 1
+        if json_start >= 0 and json_end > json_start:
+            content = content[json_start:json_end]
+
+        data = json.loads(content)
+
+        opportunities = [
+            SpecificOpportunity(
+                title=opp["title"],
+                description=opp["description"],
+                impact=opp["impact"],
+                effort=opp["effort"],
+                urgency=opp["urgency"],
+            )
+            for opp in data.get("opportunities", [])
+        ]
+
+        analysis = data.get("analysis", "")
+
+        return opportunities, analysis
+
+    except Exception:
+        return [], ""
 
 
 def _fallback_analysis(
