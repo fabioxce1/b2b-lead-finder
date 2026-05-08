@@ -1,29 +1,29 @@
 # B2B Lead Finder
 
-Aplicación para buscar empresas (clientes potenciales) basándose en tu especialización, público objetivo y ubicación. Genera un análisis completo con probabilidades, oportunidades y casos de uso puntuales.
+Application to find companies (potential clients) based on your specialization, target audience, and location. Generates a complete analysis with probabilities, opportunities, and specific use cases.
 
-## Características
+## Features
 
-- Búsqueda inteligente de empresas por especialización, público objetivo y ubicación
-- Algoritmo de matching que calcula probabilidad de conversión
-- Análisis general con estadísticas de oportunidades
-- Casos de uso puntuales generados (con IA opcional)
-- Base de datos de 20+ empresas de ejemplo en Latinoamérica
-- Interfaz moderna y responsiva
+- Smart company search by specialization, target audience, and location
+- Matching algorithm that calculates conversion probability
+- General analysis with opportunity statistics
+- Generated use cases (with optional AI)
+- Database of 20+ sample companies across Latin America
+- Modern and responsive interface
 
-## Requisitos
+## Requirements
 
 - Python 3.10+
 - Node.js 18+
 
-## Instalación
+## Installation
 
 ### Backend
 
 ```bash
 cd backend
 python3 -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
@@ -36,16 +36,16 @@ npm install
 npm run dev
 ```
 
-## Uso
+## Usage
 
-1. Abre http://localhost:5173 en tu navegador
-2. Ingresa tu especialización (ej: "marketing digital", "desarrollo web")
-3. Define tu público objetivo (ej: "empresas medianas", "startups")
-4. Especifica la ubicación (ej: "Colombia", "México", "Latinoamérica")
-5. (Opcional) Agrega tu API key de OpenAI para análisis con IA
-6. Haz clic en "Buscar Empresas"
+1. Open http://localhost:5173 in your browser
+2. Enter your specialization (e.g., "digital marketing", "web development")
+3. Define your target audience (e.g., "medium-sized companies", "startups")
+4. Specify the location (e.g., "Colombia", "Mexico", "Latin America")
+5. (Optional) Add your OpenAI API key for AI-powered analysis
+6. Click "Buscar Empresas" (Search Companies)
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 b2b-lead-finder/
@@ -53,10 +53,10 @@ b2b-lead-finder/
 │   ├── main.py              # FastAPI app
 │   ├── models.py            # Pydantic models
 │   ├── services/
-│   │   ├── company_search.py  # Lógica de búsqueda y matching
-│   │   └── ai_generator.py    # Generación de análisis con IA
+│   │   ├── company_search.py  # Search and matching logic
+│   │   └── ai_generator.py    # AI analysis generation
 │   ├── data/
-│   │   └── sample_companies.json  # Base de datos de empresas
+│   │   └── sample_companies.json  # Company database
 │   └── requirements.txt
 └── frontend/
     └── src/
@@ -70,16 +70,16 @@ b2b-lead-finder/
             └── api.js
 ```
 
-## Algoritmo de Matching
+## Matching Algorithm
 
-El score se calcula basándose en:
-- **Industria** (30 pts): Coincidencia entre tu especialización y la industria
-- **Pain Points** (15 pts): Relación entre tu servicio y las necesidades
-- **Tamaño** (15 pts): Coincidencia con tu público objetivo
-- **Ubicación** (25 pts): Proximidad geográfica
-- **Etapa de crecimiento** (5-10 pts): Empresas en expansión tienen más probabilidad
-- **Presupuesto** (5-10 pts): Capacidad de inversión
+The score is calculated based on:
+- **Industry** (30 pts): Match between your specialization and the company's industry
+- **Pain Points** (15 pts): Relationship between your service and their needs
+- **Size** (15 pts): Match with your target audience
+- **Location** (25 pts): Geographic proximity
+- **Growth Stage** (5-10 pts): Companies in expansion have higher investment probability
+- **Budget** (5-10 pts): Investment capacity
 
-## Agregar más empresas
+## Adding More Companies
 
-Edita `backend/data/sample_companies.json` siguiendo el formato existente.
+Edit `backend/data/sample_companies.json` following the existing format.
