@@ -59,7 +59,7 @@ npm run dev
 | Key | Purpose | Free Tier | How to get |
 |-----|---------|-----------|------------|
 | **Google Places API Key** | Best company search from Google | 200 requests/month | [Google Cloud Console](https://console.cloud.google.com/apis/library/places-backend.googleapis.com) |
-| **SerpAPI Key** | Google search results programmatically | 100 searches/month | [serpapi.com](https://serpapi.com/users/sign_up) |
+| **SerpAPI Key** | Google search results programmatically | 250 searches/month | [serpapi.com](https://serpapi.com/users/sign_up) |
 | **Gemini API Key** | AI analysis and opportunity generation | 15 RPM free | [aistudio.google.com](https://aistudio.google.com/apikey) |
 
 All keys are optional. Without them, the app uses free alternatives (DuckDuckGo + OpenStreetMap for search, rule-based analysis instead of AI).
